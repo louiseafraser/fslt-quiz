@@ -48,7 +48,15 @@ window.quizData = {
     GY:"Recommended: Level 2 Gym Instructor, Exercise to Music, First Aid."
   }
 };
-
+// ← Place the GIF mapping here
+const roleGifs = {
+  LA: "gifs/fslt-guardian.gif",
+  RE: "gifs/fslt-organiser.gif",
+  CL: "gifs/fslt-supporter.gif",
+  SI: "gifs/fslt-motivator.gif",
+  GI: "gifs/fslt-builder.gif",
+  GY: "gifs/fslt-coach.gif"
+};
 let currentQuestion = 0;
 let scores = {LA:0, RE:0, CL:0, SI:0, GI:0, GY:0};
 
@@ -102,8 +110,28 @@ function showResults() {
   progressFill.style.width = '100%';
   const topScore = Math.max(...Object.values(scores));
   const bestRoles = Object.keys(scores).filter(r => scores[r] === topScore);
+
+  // Show GIF first
+  let html = `<div class="fade-in">`;
+
+  bestRoles.forEach(role => {
+    html += `
+      <div style="text-align:center; margin-bottom:30px;">
+        <img src="${roleGifs[role]}" alt="${quizData.results[role].title}" style="max-width:300px; border-radius:12px;">
+      </div>
+    `;
+  });
+
+  // Optional: add a "View Result Details" button to show text after GIF
+  html += `<div id='next-btn' onclick='showResultText(${JSON.stringify(bestRoles)})'>View Result Details</div>`;
+  html += `</div>`;
+  contentDiv.innerHTML = html;
+}
+
+// Separate function to show result text after GIF
+function showResultText(bestRoles) {
   let html = `<div class="fade-in"><h1>${quizData.resultsHeading}</h1>`;
-  
+
   bestRoles.forEach(role => {
     const r = quizData.results[role];
     html += `<div class='result-card'><h2>${r.title}</h2><p>${r.description}</p></div>`;
@@ -119,6 +147,7 @@ function showResults() {
   html += `<div id='next-btn' onclick='restartQuiz()'>Start Again</div></div>`;
   contentDiv.innerHTML = html;
 }
+
 
 function restartQuiz() {
   currentQuestion = 0;
