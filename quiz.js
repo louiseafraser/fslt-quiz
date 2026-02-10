@@ -52,42 +52,57 @@ window.quizData = {
 let currentQuestion = 0;
 let scores = {LA:0, RE:0, CL:0, SI:0, GI:0, GY:0};
 
-// Render the start page
+const contentDiv = document.getElementById('content');
+const progressFill = document.getElementById('progress-fill');
+
+function updateProgress() {
+  const percent = (currentQuestion / quizData.questions.length) * 100;
+  progressFill.style.width = percent + '%';
+}
+
 function renderIntro() {
-  const c = document.getElementById('content');
-  c.innerHTML = `
-    <h1>${quizData.intro.title}</h1>
-    <p>${quizData.intro.description}</p>
-    <div id='next-btn' onclick='renderQuestion()'>Start Quiz</div>
+  progressFill.style.width = '0%';
+  contentDiv.innerHTML = `
+    <div class="fade-in">
+      <h1>${quizData.intro.title}</h1>
+      <p>${quizData.intro.description}</p>
+      <div id='next-btn' onclick='renderQuestion()'>Start Quiz</div>
+    </div>
   `;
 }
 
-// Render one question per page
 function renderQuestion() {
+  updateProgress();
   const q = quizData.questions[currentQuestion];
   if(!q) return showResults();
-  const c = document.getElementById('content');
-  let html = `<h2>${q.text}</h2>`;
+  let html = `<div class="fade-in"><h2>${q.text}</h2>`;
   q.options.forEach((o, i) => {
-    html += `<div class='button' onclick='selectAnswer(${i})'>${o.label}</div>`;
+    html += `<div class='button' onclick='selectAnswer(${i}, this)'>${o.label}</div>`;
   });
-  c.innerHTML = html;
+  html += `</div>`;
+  contentDiv.innerHTML = html;
 }
 
-// Record answer and go to next question
-function selectAnswer(i) {
+function selectAnswer(i, btn) {
+  // Animate button flash
+  btn.style.background = "#f7ba2a";
+  btn.style.color = "#000";
+  setTimeout(() => {
+    btn.style.background = "#2ea2c9";
+    btn.style.color = "#fff";
+  }, 300);
+
   const q = quizData.questions[currentQuestion];
   q.options[i].roles.forEach(r => scores[r]++);
   currentQuestion++;
-  renderQuestion();
+  setTimeout(renderQuestion, 350); // small delay for animation
 }
 
-// Show results page
 function showResults() {
-  const c = document.getElementById('content');
+  progressFill.style.width = '100%';
   const topScore = Math.max(...Object.values(scores));
   const bestRoles = Object.keys(scores).filter(r => scores[r] === topScore);
-  let html = `<h1>${quizData.resultsHeading}</h1>`;
+  let html = `<div class="fade-in"><h1>${quizData.resultsHeading}</h1>`;
   
   bestRoles.forEach(role => {
     const r = quizData.results[role];
@@ -101,16 +116,14 @@ function showResults() {
     }
   });
 
-  html += `<div id='next-btn' onclick='restartQuiz()'>Start Again</div>`;
-  c.innerHTML = html;
+  html += `<div id='next-btn' onclick='restartQuiz()'>Start Again</div></div>`;
+  contentDiv.innerHTML = html;
 }
 
-// Restart quiz
 function restartQuiz() {
   currentQuestion = 0;
   scores = {LA:0, RE:0, CL:0, SI:0, GI:0, GY:0};
   renderIntro();
 }
 
-// Initialize
 renderIntro();
