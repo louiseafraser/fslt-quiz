@@ -13,6 +13,8 @@ body {
   border-radius: 12px;
   border: 1px solid #d8e6e8;
   box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+  position: relative;
+  overflow: hidden;
 }
 
 h1, h2 {
@@ -25,6 +27,7 @@ p {
   line-height: 1.6;
 }
 
+/* Buttons */
 .button, #next-btn {
   display: block;
   background: #2ea2c9;
@@ -35,7 +38,7 @@ p {
   cursor: pointer;
   font-size: 1.1em;
   text-align: center;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.1s;
   user-select: none;
 }
 
@@ -46,6 +49,7 @@ p {
 .button:active, #next-btn:active {
   background: #f7ba2a;
   color: #000;
+  transform: scale(0.97);
 }
 
 .result-card {
@@ -56,6 +60,31 @@ p {
   border-radius: 8px;
 }
 
-#next-btn {
-  margin-top: 40px;
+/* Progress bar */
+#progress-bar {
+  width: 100%;
+  height: 12px;
+  background: #e0e0e0;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  overflow: hidden;
 }
+
+#progress-fill {
+  width: 0%;
+  height: 100%;
+  background: #2ea2c9;
+  transition: width 0.4s ease;
+  border-radius: 6px;
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(10px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
